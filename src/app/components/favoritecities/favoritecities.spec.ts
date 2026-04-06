@@ -1,19 +1,30 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 
-import { Favoritecities } from './favoritecities';
+import { FavoriteCities } from './favoritecities';
+import { WeatherService } from '../../services/weather.service';
 
-describe('Favoritecities', () => {
-  let component: Favoritecities;
-  let fixture: ComponentFixture<Favoritecities>;
+describe('FavoriteCities', () => {
+  let component: FavoriteCities;
+  let fixture: ComponentFixture<FavoriteCities>;
+
+  const weatherServiceSpy = {
+    getFavoriteCities: () => of([]),
+    getFavoriteCity: () => of({ id: 1, nomVille: 'Paris', userId: 42, dateAjout: '2026-04-06T10:15:30' }),
+    addFavoriteCity: () => of({ id: 1, nomVille: 'Paris', userId: 42, dateAjout: '2026-04-06T10:15:30' }),
+    updateFavoriteCity: () => of({ id: 1, nomVille: 'Paris', userId: 42, dateAjout: '2026-04-06T10:15:30' }),
+    deleteFavoriteCity: () => of(void 0),
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Favoritecities],
+      providers: [{ provide: WeatherService, useValue: weatherServiceSpy }],
+      imports: [FavoriteCities],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Favoritecities);
+    fixture = TestBed.createComponent(FavoriteCities);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

@@ -1,30 +1,35 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { FavoriteCity } from '../models/favorite-city.model';
-import { Weather } from '../models/weather.model';
+import { FavoriteCityRequestDto, FavoriteCityResponseDto } from '../models/favorite-city.model';
 
 @Injectable({ providedIn: 'root' })
 export class WeatherService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api';
+  private readonly apiUrl = '/api/users';
 
-  getWeatherByCity(city: string): Observable<Weather> {
-    const params = new HttpParams().set('city', city);
-
-    return this.http.get<Weather>(`${this.apiUrl}/weather`, { params });
+  getFavoriteCities(userId: number): Observable<FavoriteCityResponseDto[]> {
+    return this.http.get<FavoriteCityResponseDto[]>(`${this.apiUrl}/${userId}/favorite-cities`);
   }
 
-  getFavoriteCities(): Observable<FavoriteCity[]> {
-    return this.http.get<FavoriteCity[]>(`${this.apiUrl}/favorite-cities`);
+  getFavoriteCity(userId: number, favoriteCityId: number): Observable<FavoriteCityResponseDto> {
+    return this.http.get<FavoriteCityResponseDto>(`${this.apiUrl}/${userId}/favorite-cities/${favoriteCityId}`);
   }
 
-  addFavoriteCity(city: Omit<FavoriteCity, 'id'>): Observable<FavoriteCity> {
-    return this.http.post<FavoriteCity>(`${this.apiUrl}/favorite-cities`, city);
+  addFavoriteCity(userId: number, city: FavoriteCityRequestDto): Observable<FavoriteCityResponseDto> {
+    return this.http.post<FavoriteCityResponseDto>(`${this.apiUrl}/${userId}/favorite-cities`, city);
   }
 
-  deleteFavoriteCity(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/favorite-cities/${id}`);
+  updateFavoriteCity(
+    userId: number,
+    favoriteCityId: number,
+    city: FavoriteCityRequestDto,
+  ): Observable<FavoriteCityResponseDto> {
+    return this.http.put<FavoriteCityResponseDto>(`${this.apiUrl}/${userId}/favorite-cities/${favoriteCityId}`, city);
+  }
+
+  deleteFavoriteCity(userId: number, favoriteCityId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${userId}/favorite-cities/${favoriteCityId}`);
   }
 }

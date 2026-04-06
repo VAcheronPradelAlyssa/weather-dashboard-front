@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { FavoriteCity } from '../../models/favorite-city.model';
+import { FavoriteCityRequestDto, FavoriteCityResponseDto } from '../../models/favorite-city.model';
 import { WeatherService } from '../../services/weather.service';
 
 @Component({
@@ -15,15 +15,15 @@ import { WeatherService } from '../../services/weather.service';
 export class FavoriteCities implements OnInit {
   private readonly weatherService = inject(WeatherService);
   private readonly formBuilder = inject(FormBuilder);
+  protected readonly userId = signal(42);
 
-  protected readonly favoriteCities = signal<FavoriteCity[]>([]);
+  protected readonly favoriteCities = signal<FavoriteCityResponseDto[]>([]);
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
   protected readonly error = signal<string | null>(null);
 
   protected readonly form = this.formBuilder.nonNullable.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
-    countryCode: ['', [Validators.maxLength(2)]],
+    nomVille: ['', [Validators.required, Validators.minLength(2)]],
   });
 
   ngOnInit(): void {
@@ -34,7 +34,7 @@ export class FavoriteCities implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.weatherService.getFavoriteCities().subscribe({
+    this.weatherService.getFavoriteCities(this.userId()).subscribe({
       next: (favoriteCities) => {
         this.favoriteCities.set(favoriteCities);
         this.loading.set(false);
@@ -52,19 +52,18 @@ export class FavoriteCities implements OnInit {
       return;
     }
 
-    const { name, countryCode } = this.form.getRawValue();
-    const cityToCreate = {
-      name: name.trim(),
-      ...(countryCode.trim() ? { countryCode: countryCode.trim().toUpperCase() } : {})
+    const { nomVille } = this.form.getRawValue();
+    const cityToCreate: FavoriteCityRequestDto = {
+      nomVille: nomVille.trim()
     };
 
     this.saving.set(true);
     this.error.set(null);
 
-    this.weatherService.addFavoriteCity(cityToCreate).subscribe({
+    this.weatherService.addFavoriteCity(this.userId(), cityToCreate).subscribe({
       next: (createdCity) => {
         this.favoriteCities.update((currentCities) => [createdCity, ...currentCities]);
-        this.form.reset({ name: '', countryCode: '' });
+        this.form.reset({ nomVille: '' });
         this.saving.set(false);
       },
       error: () => {
@@ -74,10 +73,10 @@ export class FavoriteCities implements OnInit {
     });
   }
 
-  protected removeFavoriteCity(cityId: string): void {
+  protected removeFavoriteCity(cityId: number): void {
     this.error.set(null);
 
-    this.weatherService.deleteFavoriteCity(cityId).subscribe({
+    this.weatherService.deleteFavoriteCity(this.userId(), cityId).subscribe({
       next: () => {
         this.favoriteCities.update((currentCities) => currentCities.filter((city) => city.id !== cityId));
       },
@@ -87,7 +86,7 @@ export class FavoriteCities implements OnInit {
     });
   }
 
-  protected trackByCityId(_: number, city: FavoriteCity): string {
+  protected trackByCityId(_: number, city: FavoriteCityResponseDto): number {
     return city.id;
   }
 }

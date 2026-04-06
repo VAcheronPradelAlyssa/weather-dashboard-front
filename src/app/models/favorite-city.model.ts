@@ -1,7 +1,12 @@
-export interface FavoriteCity {
-  id: string;
-  name: string;
-  countryCode?: string;
-  latitude?: number;
-  longitude?: number;
+export interface FavoriteCityRequestDto {
+  nomVille: string;
 }
+
+export interface FavoriteCityResponseDto {
+  id: number;
+  nomVille: string;
+  userId: number;
+  dateAjout: string;
+}
+
+export type FavoriteCity = FavoriteCityResponseDto;
