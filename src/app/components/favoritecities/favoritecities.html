@@ -1,0 +1,112 @@
+<section class="favorite-cities-shell">
+  <header class="hero">
+    <p class="eyebrow">Weather dashboard</p>
+    <h1>Villes favorites</h1>
+    <p class="subtitle">Ajoute tes villes préférées pour voir leur météo et retrouve-les rapidement.</p>
+  </header>
+
+  <section class="panel form-panel" aria-labelledby="add-city-title">
+    <div class="panel-header">
+      <h2 id="add-city-title">Ajouter une ville</h2>
+      <p>Le backend reçoit les données via <span>WeatherService</span>.</p>
+    </div>
+
+    <form class="city-form" [formGroup]="form" (ngSubmit)="addFavoriteCity()" autocomplete="off">
+      <div class="city-input-wrapper">
+        <label>
+          <span>Nom de la ville</span>
+          <input
+            type="text"
+            formControlName="nomVille"
+            autocomplete="off"
+            placeholder="Paris"
+            aria-autocomplete="list"
+            aria-controls="city-suggestions-list"
+            aria-expanded="{{ citySuggestions().length > 0 }}"
+          />
+        </label>
+
+        <ul
+          *ngIf="citySuggestions().length > 0"
+          id="city-suggestions-list"
+          class="city-suggestions"
+          role="listbox"
+        >
+          <li
+            *ngFor="let suggestion of citySuggestions(); let i = index"
+            (click)="selectCitySuggestion(suggestion)"
+            role="option"
+            tabindex="0"
+          >
+            {{ suggestion.name }}<span *ngIf="suggestion.state">, {{ suggestion.state }}</span> ({{ suggestion.country }})
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="citySuggestionsError()" class="feedback feedback-error" role="alert" style="margin-bottom:8px;">
+        {{ citySuggestionsError() }}
+      </div>
+
+      <button type="submit" [disabled]="saving()">
+        {{ saving() ? 'Ajout en cours...' : 'Ajouter la ville' }}
+      </button>
+    </form>
+  </section>
+
+  @if (error(); as message) {
+    <p class="feedback feedback-error" role="alert">{{ message }}</p>
+  }
+
+  <section class="panel list-panel" aria-labelledby="favorite-cities-title">
+    <div class="panel-header">
+      <h2 id="favorite-cities-title">Liste des villes</h2>
+      <button type="button" class="refresh-button" (click)="loadFavoriteCities()" [disabled]="loading()">
+        {{ loading() ? 'Chargement...' : 'Actualiser' }}
+      </button>
+    </div>
+
+    @if (loading()) {
+      <p class="feedback">Chargement des villes favorites...</p>
+    } @else if (favoriteCities().length === 0) {
+      <p class="feedback">Aucune ville favorite pour le moment.</p>
+    } @else {
+      <ul class="city-list">
+        @for (city of favoriteCities(); track trackByCityId($index, city)) {
+          <li class="city-card">
+            <div>
+              <h3>{{ city.nomVille }}</h3>
+              <p>
+                Ajoutée le {{ city.dateAjout | date: 'dd/MM/yyyy à HH:mm' }}
+              </p>
+
+              <div class="weather-block">
+                @if (weatherLoadingForCity(city.id)) {
+                  <p class="weather-state">Météo en cours de chargement...</p>
+                } @else if (weatherErrorForCity(city.id); as weatherError) {
+                  <p class="weather-state weather-state-error">{{ weatherError }}</p>
+                } @else if (weatherForCity(city.id); as weather) {
+                  <p class="weather-state">
+                    {{ weather.temperature | number: '1.0-1' }}°C · {{ weather.description }}
+                  </p>
+                  <p class="weather-meta">
+                    Ressenti {{ weather.feelsLike ?? weather.temperature | number: '1.0-1' }}°C
+                    @if (weather.humidity !== undefined) {
+                      · Humidité {{ weather.humidity }}%
+                    }
+                    @if (weather.windSpeed !== undefined) {
+                      · Vent {{ weather.windSpeed }} m/s
+                    }
+                  </p>
+                }
+              </div>
+            </div>
+
+            <button type="button" class="delete-button" (click)="removeFavoriteCity(city.id)">
+              Supprimer
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</section>
