@@ -1,11 +1,15 @@
 import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 
 import { FavoriteCityRequestDto, FavoriteCityResponseDto } from '../../models/favorite-city.model';
 import { WeatherDto } from '../../models/weather.model';
+
 import { WeatherService } from '../../services/weather.service';
+import { CityAutocompleteService, CitySuggestion } from '../../services/city-autocomplete.service';
 
 @Component({
   selector: 'app-favorite-cities',
@@ -16,7 +20,13 @@ import { WeatherService } from '../../services/weather.service';
 })
 export class FavoriteCities implements OnInit {
   private readonly weatherService = inject(WeatherService);
+  private readonly cityAutocompleteService = inject(CityAutocompleteService);
   private readonly formBuilder = inject(FormBuilder);
+    // Auto-complétion
+    private readonly cityInput$ = new Subject<string>();
+    protected readonly citySuggestions = signal<CitySuggestion[]>([]);
+    protected readonly citySuggestionsLoading = signal(false);
+    protected readonly citySuggestionsError = signal<string | null>(null);
   protected readonly userId = signal(42);
 
   protected readonly favoriteCities = signal<FavoriteCityResponseDto[]>([]);
@@ -31,8 +41,40 @@ export class FavoriteCities implements OnInit {
     nomVille: ['', [Validators.required, Validators.minLength(2)]],
   });
 
+
   ngOnInit(): void {
     this.loadFavoriteCities();
+    this.setupCityAutocomplete();
+  }
+
+  private setupCityAutocomplete(): void {
+    this.form.controls.nomVille.valueChanges.subscribe((value) => {
+      this.cityInput$.next(value ?? '');
+    });
+
+    this.cityInput$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((query) => {
+          if (!query || query.length < 2) {
+            this.citySuggestions.set([]);
+            return of([]);
+          }
+          this.citySuggestionsLoading.set(true);
+          this.citySuggestionsError.set(null);
+          return this.cityAutocompleteService.searchCities(query).pipe(
+            catchError(() => {
+              this.citySuggestionsError.set('Erreur lors de la recherche de villes.');
+              return of([]);
+            })
+          );
+        })
+      )
+      .subscribe((suggestions) => {
+        this.citySuggestions.set(suggestions);
+        this.citySuggestionsLoading.set(false);
+      });
   }
 
   protected loadFavoriteCities(): void {
@@ -117,6 +159,11 @@ export class FavoriteCities implements OnInit {
       });
   }
 
+  protected selectCitySuggestion(suggestion: CitySuggestion): void {
+    this.form.controls.nomVille.setValue(suggestion.name);
+    this.citySuggestions.set([]);
+  }
+
   protected addFavoriteCity(): void {
     if (this.form.invalid || this.saving()) {
       this.form.markAllAsTouched();
@@ -136,6 +183,7 @@ export class FavoriteCities implements OnInit {
         this.favoriteCities.update((currentCities) => [createdCity, ...currentCities]);
         this.loadWeatherForCity(createdCity);
         this.form.reset({ nomVille: '' });
+        this.citySuggestions.set([]);
         this.saving.set(false);
       },
       error: () => {

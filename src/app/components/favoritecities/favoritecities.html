@@ -2,7 +2,7 @@
   <header class="hero">
     <p class="eyebrow">Weather dashboard</p>
     <h1>Villes favorites</h1>
-    <p class="subtitle">Ajoute tes villes préférées et retrouve-les rapidement.</p>
+    <p class="subtitle">Ajoute tes villes préférées pour voir leur météo et retrouve-les rapidement.</p>
   </header>
 
   <section class="panel form-panel" aria-labelledby="add-city-title">
@@ -11,11 +11,41 @@
       <p>Le backend reçoit les données via <span>WeatherService</span>.</p>
     </div>
 
-    <form class="city-form" [formGroup]="form" (ngSubmit)="addFavoriteCity()">
-      <label>
-        <span>Nom de la ville</span>
-        <input type="text" formControlName="nomVille" autocomplete="off" placeholder="Paris" />
-      </label>
+    <form class="city-form" [formGroup]="form" (ngSubmit)="addFavoriteCity()" autocomplete="off">
+      <div class="city-input-wrapper">
+        <label>
+          <span>Nom de la ville</span>
+          <input
+            type="text"
+            formControlName="nomVille"
+            autocomplete="off"
+            placeholder="Paris"
+            aria-autocomplete="list"
+            aria-controls="city-suggestions-list"
+            aria-expanded="{{ citySuggestions().length > 0 }}"
+          />
+        </label>
+
+        <ul
+          *ngIf="citySuggestions().length > 0"
+          id="city-suggestions-list"
+          class="city-suggestions"
+          role="listbox"
+        >
+          <li
+            *ngFor="let suggestion of citySuggestions(); let i = index"
+            (click)="selectCitySuggestion(suggestion)"
+            role="option"
+            tabindex="0"
+          >
+            {{ suggestion.name }}<span *ngIf="suggestion.state">, {{ suggestion.state }}</span> ({{ suggestion.country }})
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="citySuggestionsError()" class="feedback feedback-error" role="alert" style="margin-bottom:8px;">
+        {{ citySuggestionsError() }}
+      </div>
 
       <button type="submit" [disabled]="saving()">
         {{ saving() ? 'Ajout en cours...' : 'Ajouter la ville' }}
