@@ -11,8 +11,9 @@ export interface CitySuggestion {
 }
 
 @Injectable({ providedIn: 'root' })
+
 export class CityAutocompleteService {
-  private readonly apiUrl = '/api/search-cities';
+  private readonly apiUrl = 'https://weatherdashboardback-production.up.railway.app/api/search-cities';
 
   constructor(private http: HttpClient) {}
 

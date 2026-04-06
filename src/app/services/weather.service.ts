@@ -2,13 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+
 import { FavoriteCityRequestDto, FavoriteCityResponseDto } from '../models/favorite-city.model';
 import { WeatherDto } from '../models/weather.model';
+
+const BACKEND_URL = 'https://weatherdashboardback-production.up.railway.app';
 
 @Injectable({ providedIn: 'root' })
 export class WeatherService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api/users';
+  private readonly apiUrl = `${BACKEND_URL}/api/users`;
 
   getFavoriteCities(userId: number): Observable<FavoriteCityResponseDto[]> {
     return this.http.get<FavoriteCityResponseDto[]>(`${this.apiUrl}/${userId}/favorite-cities`);
