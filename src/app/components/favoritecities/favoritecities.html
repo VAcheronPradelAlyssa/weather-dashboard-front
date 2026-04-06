@@ -1,0 +1,70 @@
+<section class="favorite-cities-shell">
+  <header class="hero">
+    <p class="eyebrow">Weather dashboard</p>
+    <h1>Villes favorites</h1>
+    <p class="subtitle">Ajoute tes villes préférées et retrouve-les rapidement.</p>
+  </header>
+
+  <section class="panel form-panel" aria-labelledby="add-city-title">
+    <div class="panel-header">
+      <h2 id="add-city-title">Ajouter une ville</h2>
+      <p>Le backend reçoit les données via <span>WeatherService</span>.</p>
+    </div>
+
+    <form class="city-form" [formGroup]="form" (ngSubmit)="addFavoriteCity()">
+      <label>
+        <span>Nom de la ville</span>
+        <input type="text" formControlName="name" autocomplete="off" placeholder="Paris" />
+      </label>
+
+      <label>
+        <span>Code pays</span>
+        <input type="text" formControlName="countryCode" maxlength="2" placeholder="FR" />
+      </label>
+
+      <button type="submit" [disabled]="saving()">
+        {{ saving() ? 'Ajout en cours...' : 'Ajouter la ville' }}
+      </button>
+    </form>
+  </section>
+
+  @if (error(); as message) {
+    <p class="feedback feedback-error" role="alert">{{ message }}</p>
+  }
+
+  <section class="panel list-panel" aria-labelledby="favorite-cities-title">
+    <div class="panel-header">
+      <h2 id="favorite-cities-title">Liste des villes</h2>
+      <button type="button" class="refresh-button" (click)="loadFavoriteCities()" [disabled]="loading()">
+        {{ loading() ? 'Chargement...' : 'Actualiser' }}
+      </button>
+    </div>
+
+    @if (loading()) {
+      <p class="feedback">Chargement des villes favorites...</p>
+    } @else if (favoriteCities().length === 0) {
+      <p class="feedback">Aucune ville favorite pour le moment.</p>
+    } @else {
+      <ul class="city-list">
+        @for (city of favoriteCities(); track trackByCityId($index, city)) {
+          <li class="city-card">
+            <div>
+              <h3>{{ city.name }}</h3>
+              <p>
+                @if (city.countryCode) {
+                  {{ city.countryCode }}
+                } @else {
+                  Pays non renseigné
+                }
+              </p>
+            </div>
+
+            <button type="button" class="delete-button" (click)="removeFavoriteCity(city.id)">
+              Supprimer
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</section>

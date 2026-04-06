@@ -1,0 +1,182 @@
+:host {
+  display: block;
+}
+
+.favorite-cities-shell {
+  min-height: 100dvh;
+  padding: 32px;
+  background:
+    radial-gradient(circle at top left, rgba(89, 116, 255, 0.24), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(38, 208, 206, 0.18), transparent 24%),
+    linear-gradient(180deg, #081120 0%, #0d1728 50%, #111c31 100%);
+  color: #eff4ff;
+  box-sizing: border-box;
+}
+
+.hero {
+  max-width: 960px;
+  margin: 0 auto 24px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.78rem;
+  color: #7dd3fc;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.3rem, 5vw, 4.5rem);
+  line-height: 0.95;
+}
+
+.subtitle {
+  max-width: 640px;
+  margin: 14px 0 0;
+  color: rgba(239, 244, 255, 0.76);
+  font-size: 1.05rem;
+}
+
+.panel {
+  max-width: 960px;
+  margin: 0 auto 18px;
+  padding: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 24px;
+  background: rgba(8, 17, 32, 0.72);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.panel-header h2,
+.city-card h3 {
+  margin: 0;
+}
+
+.panel-header p,
+.city-card p,
+.feedback {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.panel-header span {
+  color: #a5f3fc;
+}
+
+.city-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr) auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.city-form label {
+  display: grid;
+  gap: 8px;
+}
+
+.city-form span {
+  font-size: 0.92rem;
+  color: rgba(226, 232, 240, 0.86);
+}
+
+.city-form input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #eff4ff;
+  box-sizing: border-box;
+}
+
+.city-form input::placeholder {
+  color: rgba(148, 163, 184, 0.8);
+}
+
+.city-form input:focus {
+  outline: 2px solid #7dd3fc;
+  outline-offset: 2px;
+}
+
+.city-form button,
+.refresh-button,
+.delete-button {
+  border: 0;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.city-form button,
+.delete-button {
+  background: linear-gradient(135deg, #38bdf8, #22c55e);
+  color: #081120;
+}
+
+.refresh-button {
+  background: rgba(148, 163, 184, 0.16);
+  color: #eff4ff;
+}
+
+.city-form button:disabled,
+.refresh-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.feedback {
+  max-width: 960px;
+  margin: 0 auto 18px;
+}
+
+.feedback-error {
+  color: #fca5a5;
+}
+
+.city-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.city-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+@media (max-width: 760px) {
+  .favorite-cities-shell {
+    padding: 18px;
+  }
+
+  .panel-header,
+  .city-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .city-form {
+    grid-template-columns: 1fr;
+  }
+}
