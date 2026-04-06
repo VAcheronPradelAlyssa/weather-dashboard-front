@@ -11,6 +11,7 @@ describe('App', () => {
         useValue: {
           getFavoriteCities: () => of([]),
           getFavoriteCity: () => of({ id: 1, nomVille: 'Paris', userId: 42, dateAjout: '2026-04-06T10:15:30' }),
+          getFavoriteCityWeather: () => of({ city: 'Paris', description: 'ciel dégagé', temperature: 18.4, feelsLike: 17.9, humidity: 54, windSpeed: 3.2, icon: '01d' }),
           addFavoriteCity: () => of({ id: 1, nomVille: 'Paris', userId: 42, dateAjout: '2026-04-06T10:15:30' }),
           updateFavoriteCity: () => of({ id: 1, nomVille: 'Paris', userId: 42, dateAjout: '2026-04-06T10:15:30' }),
           deleteFavoriteCity: () => of(void 0),

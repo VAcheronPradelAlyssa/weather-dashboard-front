@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { FavoriteCityRequestDto, FavoriteCityResponseDto } from '../models/favorite-city.model';
+import { WeatherDto } from '../models/weather.model';
 
 @Injectable({ providedIn: 'root' })
 export class WeatherService {
@@ -15,6 +16,10 @@ export class WeatherService {
 
   getFavoriteCity(userId: number, favoriteCityId: number): Observable<FavoriteCityResponseDto> {
     return this.http.get<FavoriteCityResponseDto>(`${this.apiUrl}/${userId}/favorite-cities/${favoriteCityId}`);
+  }
+
+  getFavoriteCityWeather(userId: number, favoriteCityId: number): Observable<WeatherDto> {
+    return this.http.get<WeatherDto>(`${this.apiUrl}/${userId}/favorite-cities/${favoriteCityId}/weather`);
   }
 
   addFavoriteCity(userId: number, city: FavoriteCityRequestDto): Observable<FavoriteCityResponseDto> {

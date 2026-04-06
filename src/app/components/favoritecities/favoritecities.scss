@@ -70,6 +70,25 @@
   color: rgba(226, 232, 240, 0.72);
 }
 
+.weather-block {
+  margin-top: 12px;
+}
+
+.weather-state {
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.weather-meta {
+  margin-top: 4px;
+  font-size: 0.92rem;
+  color: rgba(226, 232, 240, 0.68);
+}
+
+.weather-state-error {
+  color: #fca5a5;
+}
+
 .panel-header span {
   color: #a5f3fc;
 }

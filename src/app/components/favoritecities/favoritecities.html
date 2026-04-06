@@ -48,6 +48,27 @@
               <p>
                 Ajoutée le {{ city.dateAjout | date: 'dd/MM/yyyy à HH:mm' }}
               </p>
+
+              <div class="weather-block">
+                @if (weatherLoadingForCity(city.id)) {
+                  <p class="weather-state">Météo en cours de chargement...</p>
+                } @else if (weatherErrorForCity(city.id); as weatherError) {
+                  <p class="weather-state weather-state-error">{{ weatherError }}</p>
+                } @else if (weatherForCity(city.id); as weather) {
+                  <p class="weather-state">
+                    {{ weather.temperature | number: '1.0-1' }}°C · {{ weather.description }}
+                  </p>
+                  <p class="weather-meta">
+                    Ressenti {{ weather.feelsLike ?? weather.temperature | number: '1.0-1' }}°C
+                    @if (weather.humidity !== undefined) {
+                      · Humidité {{ weather.humidity }}%
+                    }
+                    @if (weather.windSpeed !== undefined) {
+                      · Vent {{ weather.windSpeed }} m/s
+                    }
+                  </p>
+                }
+              </div>
             </div>
 
             <button type="button" class="delete-button" (click)="removeFavoriteCity(city.id)">

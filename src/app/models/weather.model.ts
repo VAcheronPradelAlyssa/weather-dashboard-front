@@ -1,10 +1,9 @@
-export interface Weather {
-  cityName: string;
-  temperature: number;
+export interface WeatherDto {
+  city: string;
   description: string;
+  temperature: number;
   feelsLike?: number;
   humidity?: number;
-  icon?: string;
-  pressure?: number;
   windSpeed?: number;
+  icon?: string;
 }
