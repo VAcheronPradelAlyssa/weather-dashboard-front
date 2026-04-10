@@ -1,6 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+
+import { environment } from '../../environments/environment';
 
 export interface CitySuggestion {
   name: string;
@@ -13,13 +15,12 @@ export interface CitySuggestion {
 @Injectable({ providedIn: 'root' })
 
 export class CityAutocompleteService {
-  private readonly apiUrl = 'https://weatherdashboardback-production.up.railway.app/api/search-cities';
-
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiBaseUrl}/search-cities`;
 
   searchCities(query: string, limit = 5): Observable<CitySuggestion[]> {
     if (!query || query.length < 2) {
-      return new Observable<CitySuggestion[]>();
+      return of([]);
     }
     const url = `${this.apiUrl}?q=${encodeURIComponent(query)}&limit=${limit}`;
     return this.http.get<CitySuggestion[]>(url);
