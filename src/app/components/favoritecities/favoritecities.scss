@@ -73,14 +73,53 @@
   font-size: clamp(2.3rem, 5vw, 4.5rem);
   line-height: 0.95;
 }
-
 .subtitle {
   max-width: 640px;
   margin: 14px 0 0;
-  color: rgba(239, 244, 255, 0.76);
+  display: grid;
+  gap: 10px;
   font-size: 1.05rem;
+  line-height: 1.6;
 }
 
+
+.subtitle-copy {
+  display: block;
+}
+
+.subtitle-copy-strong {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.15),
+    rgba(250, 204, 21, 0.15)
+  );
+
+  border: 1px solid rgba(250, 204, 21, 0.4);
+
+  color: #facc15;
+  font-weight: 800;
+  font-size: 1.15rem;
+
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.25);
+  animation: subtlePulse 2.5s ease-in-out infinite;
+}
+.subtitle::before {
+  content: "⚠️ Mode collaboratif ouvert";
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f87171;
+}
+
+@keyframes subtlePulse {
+  0% { transform: scale(1); box-shadow: 0 0 10px rgba(250, 204, 21, 0.2); }
+  50% { transform: scale(1.02); box-shadow: 0 0 18px rgba(250, 204, 21, 0.4); }
+  100% { transform: scale(1); box-shadow: 0 0 10px rgba(250, 204, 21, 0.2); }
+}
 .panel {
   max-width: 960px;
   margin: 0 auto 18px;
@@ -250,4 +289,6 @@
   .city-form {
     grid-template-columns: 1fr;
   }
+
+  
 }
